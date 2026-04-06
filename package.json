@@ -12,6 +12,7 @@
   "packageManager": "npm@11.12.1",
   "dependencies": {
     "@aegov/design-system": "^3.0.6",
+    "@angular/animations": "^21.2.7",
     "@angular/common": "^21.2.0",
     "@angular/compiler": "^21.2.0",
     "@angular/core": "^21.2.0",

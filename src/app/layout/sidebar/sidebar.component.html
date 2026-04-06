@@ -1,0 +1,114 @@
+<aside
+  [@sidebarCollapse]="collapsed() ? 'collapsed' : 'expanded'"
+  class="relative flex flex-col h-screen bg-secondary-950 text-white overflow-hidden shrink-0 z-20">
+
+  <!-- Toggle button -->
+  <button
+    (click)="toggle()"
+    [attr.aria-label]="collapsed() ? ls.t('expand') : ls.t('collapse')"
+    class="absolute top-4 end-0 translate-x-1/2 z-10 flex items-center justify-center w-6 h-6 rounded-full bg-primary-500 hover:bg-primary-400 transition-colors shadow-md">
+    <svg class="w-3 h-3 text-white transition-transform duration-300" [class.rotate-180]="collapsed()" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <!-- Logo / Portal name -->
+  <div class="flex items-center gap-3 px-4 py-5 border-b border-secondary-800">
+    <!-- UAE Emblem -->
+    <span class="shrink-0 flex items-center justify-center w-9 h-9">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-9 h-9">
+        <circle cx="18" cy="18" r="18" fill="#C8A84B"/>
+        <text x="18" y="23" text-anchor="middle" font-size="14" font-weight="700" fill="white" font-family="serif">UAE</text>
+      </svg>
+    </span>
+    @if (!collapsed()) {
+      <div class="overflow-hidden">
+        <p class="text-xs font-body font-medium text-primary-300 leading-none truncate">{{ ls.t('portalName') }}</p>
+      </div>
+    }
+  </div>
+
+  <!-- Nav links -->
+  <nav class="flex-1 py-4 space-y-1 overflow-y-auto overflow-x-hidden">
+    @for (item of navItems; track item.key) {
+      <a
+        [routerLink]="item.route"
+        routerLinkActive="bg-primary-600 text-white"
+        [routerLinkActiveOptions]="{exact: true}"
+        class="flex items-center gap-3 px-4 py-2.5 mx-2 rounded-lg text-secondary-200 hover:bg-secondary-800 hover:text-white transition-colors group"
+        [class.justify-center]="collapsed()"
+        [attr.title]="collapsed() ? ls.t(item.key) : null">
+        <span class="shrink-0 w-5 h-5 flex items-center justify-center">
+          @switch (item.icon) {
+            @case ('home') {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+              </svg>
+            }
+            @case ('grid') {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+              </svg>
+            }
+            @case ('calendar') {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            }
+            @case ('bell') {
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+            }
+          }
+        </span>
+        @if (!collapsed()) {
+          <span class="text-sm font-body font-medium truncate">{{ ls.t(item.key) }}</span>
+        }
+      </a>
+    }
+  </nav>
+
+  <!-- Bottom: Language toggle + user -->
+  <div class="border-t border-secondary-800 p-3 space-y-3">
+    <!-- Language toggle pill -->
+    <div
+      class="relative flex items-center rounded-full bg-secondary-800 p-0.5 cursor-pointer select-none"
+      [class.justify-center]="collapsed()"
+      (click)="ls.toggle()"
+      role="button"
+      [attr.aria-label]="ls.lang() === 'en' ? 'Switch to Arabic' : 'Switch to English'">
+      @if (!collapsed()) {
+        <!-- Sliding pill -->
+        <span
+          class="absolute inset-y-0.5 w-1/2 rounded-full bg-primary-500 transition-all duration-300"
+          [class.start-0.5]="ls.lang() === 'en'"
+          [class.start-1/2]="ls.lang() === 'ar'">
+        </span>
+        <span class="relative z-10 flex-1 text-center text-xs font-semibold py-1.5 transition-colors duration-200"
+          [class.text-white]="ls.lang() === 'en'"
+          [class.text-secondary-400]="ls.lang() !== 'en'">EN</span>
+        <span class="relative z-10 flex-1 text-center text-xs font-semibold py-1.5 transition-colors duration-200"
+          [class.text-white]="ls.lang() === 'ar'"
+          [class.text-secondary-400]="ls.lang() !== 'ar'">عر</span>
+      } @else {
+        <span class="text-xs font-semibold py-1 px-2 text-primary-300">
+          {{ ls.lang() === 'en' ? 'EN' : 'عر' }}
+        </span>
+      }
+    </div>
+
+    <!-- User profile -->
+    <div class="flex items-center gap-3" [class.justify-center]="collapsed()">
+      <div class="shrink-0 w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-xs font-bold">
+        AM
+      </div>
+      @if (!collapsed()) {
+        <div class="overflow-hidden">
+          <p class="text-xs font-body font-semibold text-white truncate">{{ ls.t('userName') }}</p>
+          <p class="text-xs font-body text-secondary-400 truncate">{{ ls.t('userRole') }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</aside>
